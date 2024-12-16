@@ -15,7 +15,7 @@ struct Barang {
     float harga;
 };
 
-struct Barang barang[MAX_BARANG]; 
+struct Barang barang[MAX_BARANG];
 int jumlahBarang = 0;
 
 // Prototipe fungsi
@@ -27,21 +27,21 @@ void cariBarang();
 void updateBarang();
 void hapusBarang();
 
-// Fungsi Input Data Barang
+// Fungsi Input Data Barang atau untuk memasukkan data barang
 void inputBarang() {
     int n;
-    printf("Masukkan jumlah barang baru: ");
+    printf("Masukkan jumlah barang baru : ");
     scanf("%d", &n);
     getchar();
 
     for (int i = 0; i < n; i++) {
         printf("\nBarang ke-%d:\n", i + 1);
-        printf("Nama Barang: ");
+        printf("Nama Barang : ");
         fgets(barang[jumlahBarang].nama, 30, stdin);
         barang[jumlahBarang].nama[strcspn(barang[jumlahBarang].nama, "\n")] = 0; // Hilangkan newline
-        printf("Stok Barang: ");
+        printf("Stok Barang : ");
         scanf("%d", &barang[jumlahBarang].stok);
-        printf("Harga Barang: ");
+        printf("Harga Barang : ");
         scanf("%f", &barang[jumlahBarang].harga);
         getchar();
 
@@ -50,37 +50,37 @@ void inputBarang() {
     printf("\nData barang berhasil ditambahkan.\n");
 }
 
-// Fungsi Tampilkan Data Barang
+// Fungsi Tampilkan Data Barang atau displaying data barang
 void tampilkanBarang() {
     if (jumlahBarang == 0) {
         printf("\nTidak ada data barang.\n");
         return;
     }
 
-    printf("\nData Barang:\n");
+    printf("\nData Barang :\n");
     for (int i = 0; i < jumlahBarang; i++) {
-        printf("%d. Nama: %s | Stok: %d | Harga: %.2f\n", i + 1, barang[i].nama, barang[i].stok, barang[i].harga);
+        printf("%d. Nama : %s | Stok: %d | Harga: %.2f\n", i + 1, barang[i].nama, barang[i].stok, barang[i].harga);
     }
 }
 
-// Fungsi Update Data Barang
+// Fungsi Update Data Barang atau pembaruan data barang
 void updateBarang() {
     char namaBarang[30];
-    printf("\nMasukkan nama barang yang ingin diupdate: ");
+    printf("\nMasukkan nama barang yang ingin diupdate : ");
     getchar();
     fgets(namaBarang, 30, stdin);
     namaBarang[strcspn(namaBarang, "\n")] = 0; // Hilangkan newline
 
     for (int i = 0; i < jumlahBarang; i++) {
         if (strcmp(barang[i].nama, namaBarang) == 0) {
-            printf("\nBarang ditemukan:\n");
+            printf("\nBarang ditemukan :\n");
             printf("Nama: %s | Stok: %d | Harga: %.2f\n", barang[i].nama, barang[i].stok, barang[i].harga);
-            printf("\nMasukkan data baru:\n");
-            printf("Stok Barang: ");
+            printf("\nMasukkan data baru :\n");
+            printf("Stok Barang : ");
             scanf("%d", &barang[i].stok);
-            printf("Harga Barang: ");
+            printf("Harga Barang : ");
             scanf("%f", &barang[i].harga);
-            printf("\nData barang berhasil diupdate.\n");
+            printf("\nData barang berhasil diperbarui.\n");
             return;
         }
     }
@@ -90,7 +90,7 @@ void updateBarang() {
 // Fungsi Hapus Data Barang atau delesi-nya
 void hapusBarang() {
     char namaBarang[30];
-    printf("\nMasukkan nama barang yang ingin dihapus: ");
+    printf("\nMasukkan nama barang yang ingin dihapus : ");
     getchar();
     fgets(namaBarang, 30, stdin);
     namaBarang[strcspn(namaBarang, "\n")] = 0; // Hilangkan newline
@@ -108,45 +108,70 @@ void hapusBarang() {
     printf("\nBarang tidak ditemukan.\n");
 }
 
-// Fungsi Sorting (Bubble Sort)
+// Fungsi Sorting (Insertion Sort) untuk kebutuhan pengurutan barang
 void urutkanBarang() {
-    struct Barang temp;
-    for (int i = 0; i < jumlahBarang - 1; i++) {
-        for (int j = 0; j < jumlahBarang - i - 1; j++) {
-            if (barang[j].harga > barang[j + 1].harga) {
-                temp = barang[j];
-                barang[j] = barang[j + 1];
-                barang[j + 1] = temp;
-            }
+    struct Barang key;
+    int i, j;
+    for (i = 1; i < jumlahBarang; i++) {
+        key = barang[i];  // Menyimpan elemen yang akan disisipkan
+        j = i - 1;
+
+        // Menggeser elemen yang lebih besar dari key ke posisi satu langkah lebih maju
+        while (j >= 0 && barang[j].harga > key.harga) {
+            barang[j + 1] = barang[j];  // Geser ke kanan
+            j = j - 1;
         }
+        barang[j + 1] = key;  // Sisipkan key ke posisi yang tepat
     }
     printf("\nData barang berhasil diurutkan berdasarkan harga.\n");
 }
 
-// Fungsi Searching (Sequential Search)
+
 void cariBarang() {
     char namaBarang[30];
-    printf("\nMasukkan nama barang yang dicari: ");
+    printf("\nMasukkan nama barang yang dicari : ");
     getchar();
     fgets(namaBarang, 30, stdin);
     namaBarang[strcspn(namaBarang, "\n")] = 0; // Hilangkan newline
 
-    for (int i = 0; i < jumlahBarang; i++) {
-        if (strcmp(barang[i].nama, namaBarang) == 0) {
-            printf("\nBarang ditemukan:\n");
-            printf("Nama: %s | Stok: %d | Harga: %.2f\n", barang[i].nama, barang[i].stok, barang[i].harga);
+    // Pastikan barang sudah terurut berdasarkan nama sebelum pencarian
+    urutkanBarang();
+
+    int left = 0;
+    int right = jumlahBarang - 1;
+    int mid;
+
+    while (left <= right) {
+        mid = left + (right - left) / 2;
+
+        int comparison = strcmp(barang[mid].nama, namaBarang);
+
+        // Jika nama barang ditemukan
+        if (comparison == 0) {
+            printf("\nBarang ditemukan :\n");
+            printf("Nama : %s | Stok : %d | Harga : %.2f\n", barang[mid].nama, barang[mid].stok, barang[mid].harga);
             return;
+        }
+
+        // Jika nama barang lebih kecil dari mid, cari di sebelah kiri
+        if (comparison < 0) {
+            right = mid - 1;
+        }
+        // Jika nama barang lebih besar dari mid, cari di sebelah kanan
+        else {
+            left = mid + 1;
         }
     }
     printf("\nBarang tidak ditemukan.\n");
 }
 
-// Fungsi Menu Utamanya
+
 void menuUtama() {
     int pilihan;
+    char buffer[10]; // Buffer untuk membaca input sebagai string
 
     do {
-        printf("\nMenu Program Minimarket:\n");
+        printf("\nMenu Program Minimarket Cihuy :\n");
         printf("1. Input Data Barang\n");
         printf("2. Tampilkan Data Barang\n");
         printf("3. Urutkan Barang Berdasarkan Harga\n");
@@ -154,9 +179,18 @@ void menuUtama() {
         printf("5. Update Data Barang\n");
         printf("6. Hapus Data Barang\n");
         printf("7. Keluar\n");
-        printf("Masukkan pilihan: ");
-        scanf("%d", &pilihan);
+        printf("Masukkan pilihan : ");
 
+        // Membaca input sebagai string
+        fgets(buffer, sizeof(buffer), stdin);
+
+        // Validasi apakah input adalah angka
+        if (sscanf(buffer, "%d", &pilihan) != 1) {
+            printf("\nInput tidak valid. Masukkan angka dari 1 hingga 7 untuk memilih menu.\n");
+            continue; // Kembali ke awal loop
+        }
+
+        // Switch case untuk memproses pilihan
         switch (pilihan) {
             case 1:
                 inputBarang();
@@ -180,12 +214,12 @@ void menuUtama() {
                 printf("\nKeluar dari program.\n");
                 break;
             default:
-                printf("\nPilihan tidak valid.\n");
+                printf("\nInput tidak valid. Masukkan angka dari 1 hingga 7 untuk memilih menu.\n");
         }
     } while (pilihan != 7);
 }
 
-// Fungsi Utama
+// Fungsi Utama dari program
 int main() {
     menuUtama();
     return 0;
